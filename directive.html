@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .title{
+            width: 200px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background: yellowgreen;
+        }
+        .content{
+            width: 200px;
+            height: 200px;
+            background: blue;
+            color:red;
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+<opener title="标题1">内容1</opener>
+<opener title="标题2">内容2</opener>
+<script src="node_modules/angular/angular.js"></script>
+<script>
+    //创建angular模块
+    var app  = angular.module('appModule',[]);
+    //创建指令，不需要依赖我们的控制器，指令是通过模块创建的
+    app.directive('opener',function () {
+        return {
+            //限制使用范围 EA
+            restrict:'E',
+            //指定当前指令的模板路径，跟元素保持一个根节点
+            templateUrl:'open.html',
+            //保留指令中的内容,当我们把内容保留下后，要默认插入到带有ng-transclue的标签内
+            transclude:true,
+        }
+    });
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
