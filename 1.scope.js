@@ -23,14 +23,18 @@ Scope.prototype.$apply = function () {
             //现在的值要变成旧的
             item.last = this[item.exp];
         }
-    })
+    });
 };
 var scope = new Scope();
 scope.name = 1;
+scope.age = 1;
 scope.$watch('name',function (newVal,oldVal) {
-    console.log(newVal,oldVal)
+   scope.age = Math.random();
+    console.log(scope.age)
+});
+scope.$watch('age',function (newVal,oldVal) {
+    scope.name = Math.random();
+    console.log(scope.name)
 });
 scope.name = 2;
-scope.$apply();
-scope.name = 3;
 scope.$apply();

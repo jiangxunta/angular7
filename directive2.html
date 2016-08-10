@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .tit{
+            width: 200px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background: yellowgreen;
+            font-size: 30px;
+            color: yellow;
+        }
+        .content{
+            width: 200px;
+            height: 200px;
+            background: blue;
+            color:red;
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+<div ng-controller="ctrl">
+    <opener title="标题1">内容1</opener>
+    <opener title="标题2">内容2</opener>
+</div>
+<script src="node_modules/angular/angular.js"></script>
+<script>
+    //创建angular模块
+    var app  = angular.module('appModule',[]);
+    //创建指令，不需要依赖我们的控制器，指令是通过模块创建的
+    //默认创建的指令时不会创建独立作用域
+    app.controller('ctrl',function ($scope,$rootScope) {
+        $scope.name = 100;
+        $rootScope.name =200;
+    });
+    app.directive('opener',function () {
+        return {
+            //限制使用范围 EA
+            //指定当前指令的模板路径，跟元素保持一个根节点
+            templateUrl:'open.html',
+            //保留指令中的内容,当我们把内容保留下后，要默认插入到带有ng-transclue的标签内
+            transclude:true,
+            restrict:'E',
+            link:function (scope,element,attrs) {
+                //attrs["title"];//我们可以通过属性取到每个opener的标题
+                //scope.title  = attrs["title"]; //在当前作用域下声明一个title变量
+                //console.log(attrs["title"])
+                //让每个元素都产生一个独立作用域
+
+                //因为在模板里声明了一个方法。此时应该在对用的作用域上定义对应的方法
+                scope.flag = false; //默认隐藏
+                scope.show = function () {
+                    scope.flag = ! scope.flag;//点击后取反
+                }
+            },
+            scope:{
+                //在当前作用域下声明一个title变量引用指令上的属性
+                title:'@', //scope.title = '标题2';字符串
+                //title:'=title', //scope.title = name; 变量
+            },//无法获取控制器上的任何属性
+            //scope:true 会创建独立作用域，并且还会和控制器有关联
+            //可以直接引用，不用再link函数中声明title变量
+        };
+    });
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
