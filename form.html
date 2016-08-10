@@ -10,14 +10,18 @@
     <form name="myform" novalidate="novalidate">
         <div class="form-group">
             <label for="email" class="control-label">邮箱</label>
-            <input type="email" id="email" name="email" ng-model="email" class="form-control">
+            <input type="email" id="email" name="email" ng-model="email" class="form-control" ng-required="true" ng-maxlength="3" ng-pattern="/^\d+$/">
         </div>
         <!--根据邮箱格式是否正确进行验证-->
         <div class="alert alert-danger" ng-show="myform.email.$error.email">
-            邮箱格式不正确
+        邮箱格式不正确
+    </div>
+        `<div class="alert alert-danger" ng-show="myform.email.$error.required&&myform.email.$dirty">
+            必须填写
         </div>
-
-
+        `<div class="alert alert-danger" ng-show="myform.email.$error.pattern">
+        正则不满足
+    </div>
         <div>
             <button class="btn-primary btn">提交</button>
         </div>
