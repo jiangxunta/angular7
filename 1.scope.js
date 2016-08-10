@@ -11,13 +11,22 @@ Scope.prototype.$watch  = function (exp,fn) {
     })
 };
 Scope.prototype.$apply = function () {
-    
+    console.log(this.$$watchers);//[ { exp: 'name', fn: [Function], last: 1 } ]
+    //他是如何更新，根据last的值和当前的值进行比较看有没有变化，
+    //遍历每一个$$watchers,看值有没有变
+    this.$$watchers.forEach((item)=>{
+        item.last //上一次的值  1
+       // this[item.exp] //当前最新的值  2 现在的值，在当前作用域下取当前item上表达式对应的值
+        //脏检查
+        if(item.last !=this[item.exp]){
+            item.fn(this[item.exp],item.last)
+        }
+    })
 };
 var scope = new Scope();
 scope.name = 1;
-scope.age = 1;
 scope.$watch('name',function (newVal,oldVal) {
+    console.log(newVal,oldVal)
 });
-scope.$watch('age',function (newVal,oldVal) {
-});
-console.log(scope.$$watchers)
+scope.name = 1;
+scope.$apply();
