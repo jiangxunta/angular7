@@ -36,11 +36,10 @@
     app.controller('ctrl',function ($scope,$rootScope) {
         $scope.name = 100;
         $rootScope.name =200;
-    })
+    });
     app.directive('opener',function () {
         return {
             //限制使用范围 EA
-
             //指定当前指令的模板路径，跟元素保持一个根节点
             templateUrl:'open.html',
             //保留指令中的内容,当我们把内容保留下后，要默认插入到带有ng-transclue的标签内
