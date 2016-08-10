@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div ng-controller="my">
+    <button ng-click="fn()">改变name</button>
+<input type="text" zf-model="name">
+{{name}}
+
+    <input type="text" id="div1">
+</div>
+<script src="node_modules/angular/angular.js"></script>
+<script>
+   var app =angular.module('appModule',[]);
+    app.controller('my',function ($scope) {
+        $scope.name = 100;
+
+        $scope.fn = function () {
+            $scope.name++;
+        }
+
+
+    });
+    app.directive('zfModel',function () {
+        return {
+            restrict:'A',
+            //当我们输入值的时候让对应的scope的属性值发生变化
+            link:function (scope,element,attrs) {
+                //先取到当前zf-model绑定数据的名字name,在当前作用域下查找到scope对应的名字的值
+                //当用户输入内容不停的触发input事件把当前获取到的值给scope的name属性
+                //这里监控视图写回模型
+
+                element.on('input',function () {
+                    scope[attrs['zfModel']] = element.val();
+                    scope.$apply();//当修改数据时，视图是不刷新的因为不是angular的指令，手动调用$apply
+                    //console.log(element.val())
+                    // console.log(scope.name)
+                });
+                //把模型在赋予给视图,监控name值得变化，当值变化后赋予input框内的值
+                scope.$watch(attrs['zfModel'],function (newVal,oldVal) {
+                    element.val(newVal);
+                });
+               /* console.log(attrs['zfModel'])
+                console.log(scope[attrs['zfModel']])*/
+            }
+        }
+    })
+
+</script>
+</body>
+</html>
