@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .tit{
+            width: 200px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background: yellowgreen;
+            font-size: 30px;
+            color: yellow;
+        }
+        .content{
+            width: 200px;
+            height: 200px;
+            background: blue;
+            color:red;
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <!--
+        当指令一执行的时候，
+        1.每个opener把自己的scope教给所所属的组，
+        2.当点击自己的时候，让自己作用域下的flag取反
+        3. 把自己的作用域传递给group，group找到除当前的其他opener让其flag为false
+    -->
+    <group>
+        <opener title="标题1">内容1</opener>
+        <opener title="标题2">内容2</opener>
+        <opener title="标题3">内容3</opener>
+    </group>
+</div>
+<script src="node_modules/angular/angular.js"></script>
+<script>
+    var app  = angular.module('appModule',[]);
+    //创建一个父指令
+    app.directive('group',function () {
+        return {
+            //所有的opener都要依赖于group,创建一个公用的控制器
+            controller:function () {
+                var arr = [];
+                //用来接收所有的作用域
+                this.add = function (scope) {
+                    arr.push(scope);
+                    console.log(arr)
+                };
+                //会接受一个当前作用域
+                this.close = function (scope) {
+                    //在所用作用域下查找，除了当前传进来的其他都关掉
+                    arr.forEach(function (item) {
+                        if(item!=scope){
+                            item.flag = false;
+                        }
+                    })
+                }
+            }
+        }
+    })
+    app.directive('opener',function () {
+        //每一个opener,要依赖于当前组
+        return {
+            require:'^group', //当我们require后link函数就会多出一个参数，父级控制器的实例
+            scope:{
+                title:'@'
+            },
+            templateUrl:'open.html',
+            transclude:true,
+            link:function (scope,element,attrs,groupCtrl) {
+                //groupCtrl是所依赖的控制器的实例
+                scope.flag = false;
+                scope.show = function () {
+                    //点击的时候让自己取反
+                    scope.flag = !scope.flag;
+                    //除了自己都关闭掉
+                    groupCtrl.close(scope);
+                }
+                //把自己的作用域全部给父级
+                groupCtrl.add(scope);
+            } 
+        }
+    })
+
+    //opener组，让同一个组下的opener ，点击的当前的来回切换，同组的opener全部关闭
+    //给所有opener限定一个组
+
+</script>
+
+
+
+</body>
+</html>
