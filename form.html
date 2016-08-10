@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<div ng-controller="ctrl" class="container">
+    <form name="myform" novalidate="novalidate">
+        <div class="form-group">
+            <label for="email" class="control-label">邮箱</label>
+            <input type="email" id="email" name="email" ng-model="email" class="form-control">
+        </div>
+        <!--根据邮箱格式是否正确进行验证-->
+        <div class="alert alert-danger" ng-show="myform.email.$error.email">
+            邮箱格式不正确
+        </div>
+
+
+        <div>
+            <button class="btn-primary btn">提交</button>
+        </div>
+    </form>
+    <pre>
+        {{myform| json}}
+    </pre>
+</div>
+<script src="node_modules/angular/angular.js"></script>
+<script>
+    //在使用angular验证时候，需要关闭h5自带的验证
+    var app  = angular.module('appModule',[]);
+    app.controller('ctrl',function ($scope,$rootScope) {
+    });
+</script>
+
+
+
+</body>
+</html>
