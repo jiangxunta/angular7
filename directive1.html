@@ -20,6 +20,7 @@
             color:red;
             font-size: 40px;
         }
+
     </style>
 </head>
 <body>
@@ -35,6 +36,8 @@
         <opener title="标题2">内容2</opener>
         <opener title="标题3">内容3</opener>
     </group>
+
+
 </div>
 <script src="node_modules/angular/angular.js"></script>
 <script>
@@ -57,9 +60,9 @@
                         if(item!=scope){
                             item.flag = false;
                         }
-                    })
+                    });
                 }
-            }
+            },
         }
     })
     app.directive('opener',function () {

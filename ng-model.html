@@ -9,8 +9,6 @@
     <button ng-click="fn()">改变name</button>
 <input type="text" zf-model="name">
 {{name}}
-
-    <input type="text" id="div1">
 </div>
 <script src="node_modules/angular/angular.js"></script>
 <script>
@@ -21,6 +19,7 @@
         $scope.fn = function () {
             $scope.name++;
         }
+        console.log($scope)
 
 
     });
@@ -32,7 +31,6 @@
                 //先取到当前zf-model绑定数据的名字name,在当前作用域下查找到scope对应的名字的值
                 //当用户输入内容不停的触发input事件把当前获取到的值给scope的name属性
                 //这里监控视图写回模型
-
                 element.on('input',function () {
                     scope[attrs['zfModel']] = element.val();
                     scope.$apply();//当修改数据时，视图是不刷新的因为不是angular的指令，手动调用$apply
@@ -48,6 +46,7 @@
             }
         }
     })
+
 
 </script>
 </body>
