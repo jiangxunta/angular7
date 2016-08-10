@@ -19,7 +19,9 @@ Scope.prototype.$apply = function () {
        // this[item.exp] //当前最新的值  2 现在的值，在当前作用域下取当前item上表达式对应的值
         //脏检查
         if(item.last !=this[item.exp]){
-            item.fn(this[item.exp],item.last)
+            item.fn(this[item.exp],item.last);
+            //现在的值要变成旧的
+            item.last = this[item.exp];
         }
     })
 };
@@ -28,5 +30,7 @@ scope.name = 1;
 scope.$watch('name',function (newVal,oldVal) {
     console.log(newVal,oldVal)
 });
-scope.name = 1;
+scope.name = 2;
+scope.$apply();
+scope.name = 3;
 scope.$apply();
