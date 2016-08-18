@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.css">
+</head>
+<body ng-controller="bookCtrl">
+<h1 >{{title}}</h1>
+<table class="table table-bordered">
+    <tr>
+        <td>书的名字</td>
+        <td>书的价格</td>
+        <td>书的数量</td>
+        <td colspan="2">操作</td>
+    </tr>
+    <tr ng-repeat="book in books">
+        <td>{{book.name}}</td>
+        <td>{{book.price}}</td>
+        <td><input type="text" ng-model="book.count"></td>
+        <td><button class="btn btn-danger" ng-click="removeBook(book)">删除</button></td>
+        <td>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" ng-click="update(book)">
+                修改
+            </button>
+        </td>
+    </tr>
+</table>
+<div class="container">
+    <div class="form-group">
+        <label class="control-label" for="bookname">书的名字</label>
+        <input type="text" name="bookname" id="bookname" class="form-control" ng-model="book.name">
+    </div>
+    <div class="form-group">
+        <label class="control-label" for="bookprice">书的价格</label>
+        <input type="text" name="bookprice" id="bookprice" class="form-control" ng-model="book.price">
+    </div>
+    <div class="form-group">
+        <label class="control-label" for="bookcount">书的数量</label>
+        <input type="text" name="bookcount" id="bookcount" class="form-control" ng-model="book.count">
+    </div>
+    <div class="form-group">
+        <button class="btn btn-primary" ng-click="addBook(book)">增加</button>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                书的名字 <input type="text" ng-model="onebook.name">
+                书的价格 <input type="text" ng-model="onebook.price">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="saveChange()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script src="angular/angular.js"></script>
+
+<script src="angular-resource/angular-resource.js"></script>
+<script src="jquery/dist/jquery.js"></script>
+<script src="bootstrap/dist/js/bootstrap.js"></script>
+<script>
+    /*book.query();
+    book.delete();
+    book.update();*/
+    //增删该查  根据http的四个动词 get  post delete put 根据是否传递id来判断
+    var app = angular.module('appModule',['ngResource'])
+            .factory('book',['$resource',function ($resource) {
+                return $resource('/book/:id',{
+                    id:'@id'
+                },{
+                    update:{
+                        method:'PUT'
+                    }
+                })
+            }])
+            .controller('bookCtrl',['$scope','book',function ($scope,book) {
+                $scope.title='书店';
+                //book.query取得所有的书不传递id   /book
+                //1.书的查询
+                $scope.books = book.query();
+                //2.书的删除
+                $scope.removeBook = function (removebook) {
+                    //删除某一本书 ,当删除完成后 返回新的剩余的图书
+                    book.delete({id:removebook.id}).$promise.then(function () {
+                        //当删除后在查询
+                        $scope.books = book.query();
+                    }); //delete id
+                    //book.delete删除后 需要返回的是一个对象，但是我们返回的是一个数组
+                    //当我们删除成功后再次查询
+                };
+                //3.书的增加
+                $scope.addBook = function (item) {
+                    item.id = Math.random(); //创建随机id
+                    //要发送一个post请求 把书放入到内部 后台接收到的请求时 /book method是post方法
+                    //保存时需要增加保存的id  保存的内容
+                    book.save({id:item.id},item).$promise.then(function () {
+                        $scope.books = book.query();
+                    });
+                };
+                //修改图书
+                $scope.onebook = {};//声明一个变量
+                $scope.update = function (book) {
+                    //当我们点击当前修改的书的时候，将变量赋予给单本书，onebook就拥有当前书的所有内容
+                    //如果直接赋予空间 操作的是同一个空间 克隆一份给onebook
+                    $scope.onebook = JSON.parse(JSON.stringify(book));
+
+                };
+                $scope.saveChange  = function () {
+                    //保存修改 保存onebook  update 发送一个 put请求 并且传入一个id
+                    book.update({id:$scope.onebook.id},$scope.onebook).$promise.then(function () {
+                        $scope.books = book.query();
+                        $('#myModal').modal('toggle');//隐藏显示的层
+                    });
+                }
+            }]);
+</script>
+</body>
+</html>
